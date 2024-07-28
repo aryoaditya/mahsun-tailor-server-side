@@ -25,6 +25,8 @@ app.get("/", (req, res) => {
   });
 });
 
+require("./routes/auth.routes")(app);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${HOST}:${PORT}`);
 });
