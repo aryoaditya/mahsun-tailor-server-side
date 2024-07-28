@@ -5,18 +5,19 @@ const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8000;
 const MONGO_URL = process.env.MONGO_URL;
 const app = express();
+const db = require("./models");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// db.mongoose
-//   .connect(MONGO_URL)
-//   .then(() => {
-//     console.log("Successfully connected to MongoDB.");
-//   })
-//   .catch((err) => {
-//     console.log("Connection failed!", err);
-//   });
+db.mongoose
+  .connect(MONGO_URL)
+  .then(() => {
+    console.log("Successfully connected to MongoDB.");
+  })
+  .catch((err) => {
+    console.log("Connection failed!", err);
+  });
 
 app.get("/", (req, res) => {
   res.json({
