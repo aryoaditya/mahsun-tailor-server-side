@@ -57,7 +57,10 @@ exports.createOrder = async (req, res) => {
 
 exports.getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate({
+      path: "userId",
+      select: "name email phone",
+    });
     successResponse(
       res,
       {
@@ -96,7 +99,15 @@ exports.getPendingPaymentOrder = async (req, res) => {
 
     successResponse(
       res,
-      filteredOrders,
+      {
+        ...filteredOrders.toObject(),
+        status: STATUS_LABELS[filteredOrders.status],
+        orderDetail: {
+          ...filteredOrders.orderDetail.toObject(),
+          processStatus:
+            PROCESS_STATUS_LABELS[filteredOrders.orderDetail.processStatus],
+        },
+      },
       "Pending payments fetched successfully"
     );
   } catch (error) {
@@ -131,7 +142,15 @@ exports.getInProcessOrders = async (req, res) => {
 
     successResponse(
       res,
-      filteredOrders,
+      {
+        ...filteredOrders.toObject(),
+        status: STATUS_LABELS[filteredOrders.status],
+        orderDetail: {
+          ...filteredOrders.orderDetail.toObject(),
+          processStatus:
+            PROCESS_STATUS_LABELS[filteredOrders.orderDetail.processStatus],
+        },
+      },
       "In process orders fetched successfully"
     );
   } catch (error) {
@@ -162,7 +181,15 @@ exports.getCompletedOrders = async (req, res) => {
 
     successResponse(
       res,
-      filteredOrders,
+      {
+        ...filteredOrders.toObject(),
+        status: STATUS_LABELS[filteredOrders.status],
+        orderDetail: {
+          ...filteredOrders.orderDetail.toObject(),
+          processStatus:
+            PROCESS_STATUS_LABELS[filteredOrders.orderDetail.processStatus],
+        },
+      },
       "Completed orders fetched successfully"
     );
   } catch (error) {
@@ -220,6 +247,10 @@ exports.updateOrder = async (req, res) => {
       {
         ...order.toObject(),
         status: STATUS_LABELS[order.status],
+        orderDetail: {
+          ...order.orderDetail.toObject(),
+          processStatus: PROCESS_STATUS_LABELS[order.orderDetail.processStatus],
+        },
       },
       "Order updated successfully"
     );
@@ -260,7 +291,10 @@ exports.receivedOrder = async (req, res) => {
       {
         ...order.toObject(),
         status: STATUS_LABELS[order.status],
-        processStatus: PROCESS_STATUS_LABELS[order.orderDetail.processStatus],
+        orderDetail: {
+          ...order.orderDetail.toObject(),
+          processStatus: PROCESS_STATUS_LABELS[order.orderDetail.processStatus],
+        },
       },
       "Order updated successfully"
     );
