@@ -1,12 +1,26 @@
+const auth = require("../middlewares/auth.middleware");
+
 module.exports = (app) => {
   const order = require("../controllers/order.controller");
   const router = require("express").Router();
 
-  // index
+  // Specific routes first to avoid conflict with dynamic parameter ':id'
+  // router.get("/queued", auth.verifyToken, order.getQueuedOrders);
+  router.get(
+    "/pending-payment",
+    auth.verifyToken,
+    order.getPendingPaymentOrder
+  );
+  // router.get("/in-process", auth.verifyToken, order.getInProcessOrders);
+  // router.get("/completed", auth.verifyToken, order.getCompletedOrders);
+
+  // General routes
   router.get("/", order.getOrders);
-  router.post("/", order.createOrder);
-  router.get("/:id", order.getOrderById);
-  router.patch("/:id", order.updateOrder);
+  router.post("/", auth.verifyToken, order.createOrder);
+
+  // Route with dynamic parameter ':id'
+  router.get("/:id", auth.verifyToken, order.getOrderById);
+  router.patch("/:id", auth.verifyToken, auth.verifyAdmin, order.updateOrder);
 
   app.use("/api/orders", router);
 };

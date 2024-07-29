@@ -2,6 +2,10 @@ const { STATUS, STATUS_LABELS } = require("../utils/constants/status.constant");
 const {
   MEASUREMENT_LOCATION_LABELS,
 } = require("../utils/constants/measurementLocation.constant");
+const {
+  PROCESS_STATUS,
+  PROCESS_STATUS_LABELS,
+} = require("../utils/constants/processStatus.constant");
 const db = require("../models");
 const Order = db.orders;
 const OrderDetail = db.orderDetails;
@@ -69,6 +73,46 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
+exports.getPendingPaymentOrder = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      status: STATUS.ACCEPTED, // Accepted
+      userId: req.userId,
+    })
+      .populate({
+        path: "orderDetail",
+        match: { processStatus: PROCESS_STATUS.WAITING_FOR_PAYMENT }, // Waiting for Payment
+      })
+      .populate({
+        path: "userId",
+        select: "name email phone",
+      });
+
+    const filteredOrders = orders.filter((order) => order.orderDetail);
+
+    if (filteredOrders.length === 0) {
+      return successResponse(res, [], "No pending payments found");
+    }
+
+    successResponse(
+      res,
+      filteredOrders,
+      "Pending payments fetched successfully"
+    );
+  } catch (error) {
+    serverErrorResponse(res, error.message);
+  }
+};
+
+exports.getProcessedOrder = async (req, res) => {
+  try {
+    const order = await Order.find({ status: STATUS.PENDING });
+    successResponse(res, order, "Order fetched successfully");
+  } catch (error) {
+    serverErrorResponse(res, error.message);
+  }
+};
+
 exports.updateOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -103,8 +147,7 @@ exports.updateOrder = async (req, res) => {
 
     if (newStatus === STATUS.ACCEPTED) {
       const orderDetail = new OrderDetail({
-        processStatus: "Waiting for Payment",
-        shippingMethod: "standard",
+        processStatus: PROCESS_STATUS.WAITING_FOR_PAYMENT,
       });
 
       await orderDetail.save();

@@ -46,12 +46,12 @@ module.exports = (mongoose) => {
       status: {
         type: Number,
         required: true,
-        enum: [0, 1, 2], // 0: pending, 1: processing, 2: completed
+        enum: [0, 1, 2, 3], // 0: pending, 1: processing, 2: completed, 3: cancelled
         default: 0,
       },
       orderDetail: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "OrderDetail",
+        ref: "order_details",
         default: null,
       },
     },
