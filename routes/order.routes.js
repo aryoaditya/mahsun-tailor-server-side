@@ -12,7 +12,7 @@ module.exports = (app) => {
     auth.verifyToken,
     order.getPendingPaymentOrder
   );
-  router.get("/in-progress", auth.verifyToken, order.getInProcessOrders);
+  router.get("/in-process", auth.verifyToken, order.getInProcessOrders);
 
   // General routes
   router.get("/", order.getOrders);
@@ -21,6 +21,7 @@ module.exports = (app) => {
   // Route with dynamic parameter ':id'
   router.get("/:id", auth.verifyToken, order.getOrderById);
   router.patch("/:id", auth.verifyToken, auth.verifyAdmin, order.updateOrder);
+  router.patch("/:id/received", auth.verifyToken, order.receivedOrder);
 
   app.use("/api/orders", router);
 };

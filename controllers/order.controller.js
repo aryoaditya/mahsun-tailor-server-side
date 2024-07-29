@@ -112,7 +112,11 @@ exports.getInProcessOrders = async (req, res) => {
     })
       .populate({
         path: "orderDetail",
-        match: { processStatus: PROCESS_STATUS.IN_PROCESS }, // PROCESS STATUS: In Process
+        match: {
+          processStatus: {
+            $in: [PROCESS_STATUS.IN_PROCESS, PROCESS_STATUS.IN_DELIVERY],
+          }, // PROCESS STATUS: In Process OR In Delivery
+        },
       })
       .populate({
         path: "userId",
@@ -151,7 +155,6 @@ exports.getCompletedOrders = async (req, res) => {
       });
 
     const filteredOrders = orders.filter((order) => order.orderDetail);
-    console.log(filteredOrders);
 
     if (filteredOrders.length === 0) {
       return successResponse(res, [], "No completed orders found");
@@ -217,6 +220,47 @@ exports.updateOrder = async (req, res) => {
       {
         ...order.toObject(),
         status: STATUS_LABELS[order.status],
+      },
+      "Order updated successfully"
+    );
+  } catch (error) {
+    serverErrorResponse(res, error.message);
+  }
+};
+
+exports.receivedOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate({
+      path: "orderDetail",
+      match: { processStatus: PROCESS_STATUS.IN_DELIVERY },
+    });
+
+    if (!order || !order.orderDetail) {
+      return serverErrorResponse(res, "Order not found", 404);
+    }
+
+    const oldProcessStatus = order.orderDetail.processStatus;
+
+    if (oldProcessStatus !== PROCESS_STATUS.IN_DELIVERY) {
+      return clientErrorResponse(
+        res,
+        "Status can only be updated from 'In Delivery' state",
+        400
+      );
+    }
+
+    const newProcessStatus = PROCESS_STATUS.COMPLETED;
+
+    order.orderDetail.processStatus = newProcessStatus;
+
+    await order.orderDetail.save();
+
+    successResponse(
+      res,
+      {
+        ...order.toObject(),
+        status: STATUS_LABELS[order.status],
+        processStatus: PROCESS_STATUS_LABELS[order.orderDetail.processStatus],
       },
       "Order updated successfully"
     );
