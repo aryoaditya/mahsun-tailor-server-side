@@ -9,7 +9,6 @@ module.exports = (mongoose) => {
       phone: {
         type: String,
         required: true,
-        unique: true,
       },
       product: {
         type: String,
@@ -28,8 +27,9 @@ module.exports = (mongoose) => {
         required: true,
       },
       measurementLocation: {
-        type: String,
+        type: Number,
         required: true,
+        enum: [0, 1, 2], // 0: customer_place, 1: tailor_place, 2: no_measurement
       },
       needMeasurement: {
         type: Boolean,
@@ -38,13 +38,21 @@ module.exports = (mongoose) => {
       estimatedDate: {
         type: Date,
         required: true,
+        default: Date.now(),
       },
       remarks: {
         type: String,
       },
       status: {
-        type: String,
+        type: Number,
         required: true,
+        enum: [0, 1, 2], // 0: pending, 1: processing, 2: completed
+        default: 0,
+      },
+      orderDetail: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "OrderDetail",
+        default: null,
       },
     },
     {

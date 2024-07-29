@@ -1,11 +1,6 @@
 module.exports = (mongoose) => {
   const orderDetailSchema = mongoose.Schema(
     {
-      orderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "orders",
-        required: true,
-      },
       processStatus: {
         type: String,
         required: true,
