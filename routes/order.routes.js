@@ -6,13 +6,13 @@ module.exports = (app) => {
 
   // Specific routes first to avoid conflict with dynamic parameter ':id'
   // router.get("/queued", auth.verifyToken, order.getQueuedOrders);
+  router.get("/completed", auth.verifyToken, order.getCompletedOrders);
   router.get(
     "/pending-payment",
     auth.verifyToken,
     order.getPendingPaymentOrder
   );
-  // router.get("/in-process", auth.verifyToken, order.getInProcessOrders);
-  // router.get("/completed", auth.verifyToken, order.getCompletedOrders);
+  router.get("/in-progress", auth.verifyToken, order.getInProcessOrders);
 
   // General routes
   router.get("/", order.getOrders);

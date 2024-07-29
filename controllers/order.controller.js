@@ -104,10 +104,64 @@ exports.getPendingPaymentOrder = async (req, res) => {
   }
 };
 
-exports.getProcessedOrder = async (req, res) => {
+exports.getInProcessOrders = async (req, res) => {
   try {
-    const order = await Order.find({ status: STATUS.PENDING });
-    successResponse(res, order, "Order fetched successfully");
+    const orders = await Order.find({
+      status: STATUS.ACCEPTED, // ORDER STATUS: Accepted
+      userId: req.userId,
+    })
+      .populate({
+        path: "orderDetail",
+        match: { processStatus: PROCESS_STATUS.IN_PROCESS }, // PROCESS STATUS: In Process
+      })
+      .populate({
+        path: "userId",
+        select: "name email phone",
+      });
+
+    const filteredOrders = orders.filter((order) => order.orderDetail);
+
+    if (filteredOrders.length === 0) {
+      return successResponse(res, [], "No in process orders found");
+    }
+
+    successResponse(
+      res,
+      filteredOrders,
+      "In process orders fetched successfully"
+    );
+  } catch (error) {
+    serverErrorResponse(res, error.message);
+  }
+};
+
+exports.getCompletedOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      status: STATUS.ACCEPTED,
+      userId: req.userId,
+    })
+      .populate({
+        path: "orderDetail",
+        match: { processStatus: PROCESS_STATUS.COMPLETED },
+      })
+      .populate({
+        path: "userId",
+        select: "name email phone",
+      });
+
+    const filteredOrders = orders.filter((order) => order.orderDetail);
+    console.log(filteredOrders);
+
+    if (filteredOrders.length === 0) {
+      return successResponse(res, [], "No completed orders found");
+    }
+
+    successResponse(
+      res,
+      filteredOrders,
+      "Completed orders fetched successfully"
+    );
   } catch (error) {
     serverErrorResponse(res, error.message);
   }
