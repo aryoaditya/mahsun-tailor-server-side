@@ -10,11 +10,11 @@ module.exports = (mongoose) => {
         type: String,
         required: true,
       },
-      product: {
-        type: String,
+      model: {
+        type: [String],
         required: true,
       },
-      customer_address: {
+      customerAddress: {
         type: String,
         required: true,
       },
@@ -38,7 +38,6 @@ module.exports = (mongoose) => {
       estimatedDate: {
         type: Date,
         required: true,
-        default: Date.now(),
       },
       remarks: {
         type: String,

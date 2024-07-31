@@ -1,9 +1,7 @@
 const db = require("../models");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET;
 const User = db.users;
 const {
   successResponse,
@@ -11,6 +9,7 @@ const {
   clientErrorResponse,
   loginResponse,
 } = require("../utils/responseHandler");
+const { generateToken } = require("../utils/auth");
 
 // User registration
 exports.register = async (req, res) => {
@@ -51,7 +50,6 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { emailOrUsername, password } = req.body;
-    console.log(emailOrUsername, password);
     const user = await User.findOne({
       $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });
@@ -66,9 +64,8 @@ exports.login = async (req, res) => {
       return clientErrorResponse(res, "Wrong email or password", 401);
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: "12h",
-    });
+    const token = generateToken(user);
+
     loginResponse(res, token);
   } catch (err) {
     serverErrorResponse(res, err.message);
