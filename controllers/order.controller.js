@@ -17,7 +17,14 @@ const {
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find()
+      .populate({
+        path: "userId",
+        select: "name email phone address city zip",
+      })
+      .populate({
+        path: "orderDetail",
+      });
 
     if (orders.length === 0) {
       return successResponse(res, [], "No orders found");

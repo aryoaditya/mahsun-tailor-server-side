@@ -6,7 +6,7 @@ const PROCESS_STATUS = {
 };
 
 const PROCESS_STATUS_LABELS = {
-  [PROCESS_STATUS.WAITING_FOR_PAYMENT]: "Waiting for payment",
+  [PROCESS_STATUS.WAITING_FOR_PAYMENT]: "Waiting for Payment",
   [PROCESS_STATUS.IN_PROCESS]: "In Process",
   [PROCESS_STATUS.IN_DELIVERY]: "In Delivery",
   [PROCESS_STATUS.COMPLETED]: "Completed",
