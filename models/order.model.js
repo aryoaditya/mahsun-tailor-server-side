@@ -1,3 +1,5 @@
+const transactionModel = require("./transaction.model");
+
 module.exports = (mongoose) => {
   const orderSchema = mongoose.Schema(
     {
@@ -22,7 +24,7 @@ module.exports = (mongoose) => {
         type: String,
         required: true,
       },
-      zip: {
+      postalCode: {
         type: String,
         required: true,
       },
@@ -45,12 +47,18 @@ module.exports = (mongoose) => {
       status: {
         type: Number,
         required: true,
-        enum: [0, 1, 2, 3], // 0: pending, 1: processing, 2: completed, 3: cancelled
+        enum: [0, 1, 2, 3], // 0: Pending, 1: Accepted, 2: Rejected, 3: Canceled
         default: 0,
       },
-      orderDetail: {
+      processStatus: {
+        type: Number,
+        required: true,
+        enum: [0, 1, 2, 3], // 0: Waiting for Payment, 1: In Process, 2: In Delivery, 3: Completed
+        default: 0,
+      },
+      transaction: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "order_details",
+        ref: "transactions",
         default: null,
       },
     },

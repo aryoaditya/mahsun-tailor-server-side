@@ -7,7 +7,8 @@ const MEASUREMENT_LOCATION = {
 const MEASUREMENT_LOCATION_LABELS = {
   [MEASUREMENT_LOCATION.CUSTOMER_PLACE]: "Pengukuran di tempat pelanggan",
   [MEASUREMENT_LOCATION.TAILOR_PLACE]: "Pengukuran di tempat penjahit",
-  [MEASUREMENT_LOCATION.NO_MEASUREMENT]: "Tidak perlu pengukuran",
+  [MEASUREMENT_LOCATION.NO_MEASUREMENT]:
+    "Tidak perlu, saya kirim contoh ukuran",
 };
 
 module.exports = { MEASUREMENT_LOCATION, MEASUREMENT_LOCATION_LABELS };
