@@ -1,3 +1,5 @@
+const transactionModel = require("./transaction.model");
+
 module.exports = (mongoose) => {
   const orderSchema = mongoose.Schema(
     {
@@ -9,13 +11,12 @@ module.exports = (mongoose) => {
       phone: {
         type: String,
         required: true,
-        unique: true,
       },
-      product: {
-        type: String,
+      model: {
+        type: [String],
         required: true,
       },
-      customer_address: {
+      customerAddress: {
         type: String,
         required: true,
       },
@@ -23,13 +24,14 @@ module.exports = (mongoose) => {
         type: String,
         required: true,
       },
-      zip: {
+      postalCode: {
         type: String,
         required: true,
       },
       measurementLocation: {
-        type: String,
+        type: Number,
         required: true,
+        enum: [0, 1, 2], // 0: customer_place, 1: tailor_place, 2: no_measurement
       },
       needMeasurement: {
         type: Boolean,
@@ -43,8 +45,21 @@ module.exports = (mongoose) => {
         type: String,
       },
       status: {
-        type: String,
+        type: Number,
         required: true,
+        enum: [0, 1, 2, 3], // 0: Pending, 1: Accepted, 2: Rejected, 3: Canceled
+        default: 0,
+      },
+      processStatus: {
+        type: Number,
+        required: true,
+        enum: [0, 1, 2, 3], // 0: Waiting for Payment, 1: In Process, 2: In Delivery, 3: Completed
+        default: 0,
+      },
+      transaction: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "transactions",
+        default: null,
       },
     },
     {

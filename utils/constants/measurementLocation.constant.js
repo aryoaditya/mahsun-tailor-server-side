@@ -1,0 +1,14 @@
+const MEASUREMENT_LOCATION = {
+  CUSTOMER_PLACE: 0,
+  TAILOR_PLACE: 1,
+  NO_MEASUREMENT: 2,
+};
+
+const MEASUREMENT_LOCATION_LABELS = {
+  [MEASUREMENT_LOCATION.CUSTOMER_PLACE]: "Pengukuran di tempat pelanggan",
+  [MEASUREMENT_LOCATION.TAILOR_PLACE]: "Pengukuran di tempat penjahit",
+  [MEASUREMENT_LOCATION.NO_MEASUREMENT]:
+    "Tidak perlu, saya kirim contoh ukuran",
+};
+
+module.exports = { MEASUREMENT_LOCATION, MEASUREMENT_LOCATION_LABELS };

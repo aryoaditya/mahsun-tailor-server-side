@@ -30,7 +30,7 @@ module.exports = (mongoose) => {
       city: {
         type: String,
       },
-      zip: {
+      postalCode: {
         type: String,
       },
       isAdmin: {
